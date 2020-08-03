@@ -3,6 +3,10 @@ import TodoList from './components/TodoList';
 import TodoForm from './components/TodoForm';
 import ReactDOM from "react-dom";
 import './components/Todo.css'
+// import { useBeforeunload } from 'react-beforeunload';
+
+// useBeforeunload(event => event.preventDefault());
+
 
 const todo = [
   {
@@ -44,6 +48,31 @@ toggleTask = id => {
     })
   });
 };
+
+onUnload = e => {
+  localStorage.setItem("Todo", JSON.stringify(this.state.todo));
+};
+
+componentDidMount() {
+  window.addEventListener("beforeunload", this.onUnload);
+  window.addEventListener('load', this.onload);
+}
+
+onload = () =>{
+  let storedTodo = localStorage.getItem("Todo");
+  let convertedTodo = JSON.parse(storedTodo);
+
+  if(convertedTodo.length > 1 || convertedTodo.length === 1 && convertedTodo[0] !== todo){
+    this.setState({
+      todo: convertedTodo
+    })
+  }else{
+    return
+  }
+
+
+}
+
 
 //adds new task with form data and adds it to todo state
 addTask = task => {
